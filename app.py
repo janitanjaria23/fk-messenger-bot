@@ -33,7 +33,7 @@ def webhook():
                         "id"]
                     message_text = messaging_event["message"]["text"] # this is the text of the message
 
-                    send_message(sender_id)
+                    send_message(sender_id, message_text)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -47,14 +47,29 @@ def webhook():
     return "ok", 200
 
 
-def send_first_message(recipient_id):
+def get_google_geocoding_api_response(address):
+    google_url = "https://maps.googleapis.com/maps/api/geocode/json"
+    api_key = "AIzaSyD5kj_DfP7WCqOhS4HPbWsrGoUFyTo6NhE"
+    location = None
+    try:
+        r = requests.get(google_url, params=dict(address=address, key=api_key))
+        resp = r.json()
+        if 'results' in resp and len(resp['results']) > 0:
+            location = ','.join([resp['results']['geometry']['location']['lat'], resp['results']['geometry']['location']['lng']])
+    except Exception as err:
+        log(err)
+
+    return location
+
+
+def send_first_message(recipient_id, message_text):
     first_msg_data = json.dumps({
         "recipient": {
             "id": recipient_id
         },
         # "setting_type": "greeting",
         "message": {
-            "text": cfg.WELCOME_MESSAGE
+            "text": message_text
         }
     })
 
@@ -109,12 +124,14 @@ def send_attachment_message(recipient_id):
         log(r.text)
 
 
-def send_message(recipient_id):
+def send_message(recipient_id, message_text):
     log("sending message to {recipient}".format(recipient=recipient_id))
 
     send_greeting_message(recipient_id)
-    send_first_message(recipient_id)
+    send_first_message(recipient_id, )
     send_attachment_message(recipient_id)
+    location = get_google_geocoding_api_response(message_text)
+    send_first_message(recipient_id, location)
 
 
 def log(message):
