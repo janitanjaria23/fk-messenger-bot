@@ -75,7 +75,7 @@ def send_message(recipient_id, message_text):
         },
         # "setting_type": "greeting",
         "message": {
-            "text": "Timeless apparel for the masses.",
+            # "text": "Timeless apparel for the masses.",
             "attachment": {
                 "type": "image",
                 "payload": {
