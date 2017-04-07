@@ -101,7 +101,7 @@ def send_attachment_message(recipient_id):
         }
     })
 
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers,
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=cfg.params, headers=cfg.headers,
                       data=attachment_data)
     if r.status_code != 200:
         log(r.status_code)
@@ -110,7 +110,7 @@ def send_attachment_message(recipient_id):
 
 
 def send_message(recipient_id):
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
+    log("sending message to {recipient}".format(recipient=recipient_id))
 
     send_greeting_message(recipient_id)
     send_first_message(recipient_id)
