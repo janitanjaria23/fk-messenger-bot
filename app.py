@@ -20,7 +20,6 @@ def hello():
 
 @app.route('/', methods=['POST'])
 def webhook():
-
     # endpoint for processing incoming messaging events
 
     data = request.get_json()
@@ -33,8 +32,9 @@ def webhook():
 
                 if messaging_event.get("message"):  # someone sent us a message
 
-                    sender_id = messaging_event["sender"]["id"]        # the facebook ID of the person sending you the message
-                    recipient_id = messaging_event["recipient"]["id"]  # the recipient's ID, which should be your page's facebook ID
+                    sender_id = messaging_event["sender"]["id"]  # the facebook ID of the person sending you the message
+                    recipient_id = messaging_event["recipient"][
+                        "id"]  # the recipient's ID, which should be your page's facebook ID
                     message_text = messaging_event["message"]["text"]  # the message's text
 
                     send_message(sender_id, "Welcome to Janit's Test Bot! Good to hear from you")
@@ -52,7 +52,6 @@ def webhook():
 
 
 def send_message(recipient_id, message_text):
-
     log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
 
     params = {
@@ -61,21 +60,13 @@ def send_message(recipient_id, message_text):
     headers = {
         "Content-Type": "application/json"
     }
+
     data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "message": {
-            "text": message_text
-        }
-    })
-    greeting_data = json.dumps({
         "recipient": {
             "id": recipient_id
         },
         # "setting_type": "greeting",
         "message": {
-            # "text": "Timeless apparel for the masses.",
             "attachment": {
                 "type": "image",
                 "payload": {
@@ -84,13 +75,25 @@ def send_message(recipient_id, message_text):
             }
         }
     })
-    # r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
-    # if r.status_code != 200:
-    #     log(r.status_code)
-    #     log("Response text: ")
-    #     log(r.text)
 
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=greeting_data)
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log("Response text: ")
+        log(r.text)
+
+    greeting_data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "setting_type": "greeting",
+        "greeting": {
+            "text": "Welcome to Janit's Test Bot... Happy to hear from you"
+        }
+    })
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers,
+                      data=greeting_data)
     if r.status_code != 200:
         log(r.status_code)
         log("Response text: ")
