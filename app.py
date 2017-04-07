@@ -4,6 +4,7 @@ import json
 
 import requests
 from flask import Flask, request
+import config as cfg
 
 app = Flask(__name__)
 
@@ -20,24 +21,19 @@ def hello():
 
 @app.route('/', methods=['POST'])
 def webhook():
-    # endpoint for processing incoming messaging events
-
     data = request.get_json()
-    log(data)  # you may not want to log every incoming message in production, but it's good for testing
-
+    log(data)
     if data["object"] == "page":
-
         for entry in data["entry"]:
             for messaging_event in entry["messaging"]:
 
-                if messaging_event.get("message"):  # someone sent us a message
-
-                    sender_id = messaging_event["sender"]["id"]  # the facebook ID of the person sending you the message
+                if messaging_event.get("message"):
+                    sender_id = messaging_event["sender"]["id"]
                     recipient_id = messaging_event["recipient"][
-                        "id"]  # the recipient's ID, which should be your page's facebook ID
-                    message_text = messaging_event["message"]["text"]  # the message's text
+                        "id"]
+                    message_text = messaging_event["message"]["text"] # this is the text of the message
 
-                    send_message(sender_id, "Welcome to Janit's Test Bot! Good to hear from you")
+                    send_message(sender_id)
 
                 if messaging_event.get("delivery"):  # delivery confirmation
                     pass
@@ -51,33 +47,46 @@ def webhook():
     return "ok", 200
 
 
-def send_message(recipient_id, message_text):
-    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
-
-    params = {
-        "access_token": os.environ["PAGE_ACCESS_TOKEN"]
-    }
-    headers = {
-        "Content-Type": "application/json"
-    }
-
+def send_first_message(recipient_id):
     first_msg_data = json.dumps({
         "recipient": {
             "id": recipient_id
         },
         # "setting_type": "greeting",
         "message": {
-            "text": "Padharo mare desh"
+            "text": cfg.WELCOME_MESSAGE
         }
     })
 
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers,
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=cfg.params, headers=cfg.headers,
                       data=first_msg_data)
     if r.status_code != 200:
         log(r.status_code)
         log("Response text: ")
         log(r.text)
 
+
+def send_greeting_message(recipient_id):
+    greeting_data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
+        "setting_type": "greeting",
+        "greeting": {
+            "text": cfg.GREETING_TEXT
+        }
+    })
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=cfg.params, headers=cfg.headers,
+                      data=greeting_data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log("Response text: ")
+        log(r.text)
+    log("greeting message sent")
+
+
+def send_attachment_message(recipient_id):
     attachment_data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -86,7 +95,7 @@ def send_message(recipient_id, message_text):
             "attachment": {
                 "type": "image",
                 "payload": {
-                    "url": "https://www.oneyoungworld.com/sites/oneyoungworld.com/files/images/roger-federer.jpg"
+                    "url": cfg.TENNIS_CHAMP_IMAGE
                 }
             }
         }
@@ -99,25 +108,16 @@ def send_message(recipient_id, message_text):
         log("Response text: ")
         log(r.text)
 
-    greeting_data = json.dumps({
-        "recipient": {
-            "id": recipient_id
-        },
-        "setting_type": "greeting",
-        "greeting": {
-            "text": "Welcome to Janit's Test Bot... Happy to hear from you"
-        }
-    })
 
-    r = requests.post("https://graph.facebook.com/v2.6/me/thread_settings", params=params, headers=headers,
-                      data=greeting_data)
-    if r.status_code != 200:
-        log(r.status_code)
-        log("Response text: ")
-        log(r.text)
+def send_message(recipient_id):
+    log("sending message to {recipient}: {text}".format(recipient=recipient_id, text=message_text))
+
+    send_greeting_message(recipient_id)
+    send_first_message(recipient_id)
+    send_attachment_message(recipient_id)
 
 
-def log(message):  # simple wrapper for logging to stdout on heroku
+def log(message):
     print str(message)
     sys.stdout.flush()
 
