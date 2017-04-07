@@ -70,7 +70,10 @@ def send_message(recipient_id, message_text):
         }
     })
     greeting_data = json.dumps({
-        "setting_type": "greeting",
+        "recipient": {
+            "id": recipient_id
+        },
+        # "setting_type": "greeting",
         "message": {
             "text": "Timeless apparel for the masses.",
             "attachment": {
