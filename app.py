@@ -61,11 +61,27 @@ def send_message(recipient_id, message_text):
         "Content-Type": "application/json"
     }
 
-    data = json.dumps({
+    first_msg_data = json.dumps({
         "recipient": {
             "id": recipient_id
         },
         # "setting_type": "greeting",
+        "message": {
+            "text": "Padharo mare desh"
+        }
+    })
+
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers,
+                      data=first_msg_data)
+    if r.status_code != 200:
+        log(r.status_code)
+        log("Response text: ")
+        log(r.text)
+
+    attachment_data = json.dumps({
+        "recipient": {
+            "id": recipient_id
+        },
         "message": {
             "attachment": {
                 "type": "image",
@@ -76,7 +92,8 @@ def send_message(recipient_id, message_text):
         }
     })
 
-    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers,
+                      data=attachment_data)
     if r.status_code != 200:
         log(r.status_code)
         log("Response text: ")
