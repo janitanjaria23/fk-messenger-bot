@@ -128,7 +128,7 @@ def send_message(recipient_id, message_text):
     log("sending message to {recipient}".format(recipient=recipient_id))
 
     send_greeting_message(recipient_id)
-    send_first_message(recipient_id, )
+    send_first_message(recipient_id, cfg.WELCOME_MESSAGE)
     send_attachment_message(recipient_id)
     location = get_google_geocoding_api_response(message_text)
     send_first_message(recipient_id, location)
