@@ -71,8 +71,14 @@ def send_message(recipient_id, message_text):
     })
     greeting_data = json.dumps({
         "setting_type": "greeting",
-        "greeting": {
-            "text": "Timeless apparel for the masses."
+        "message": {
+            "text": "Timeless apparel for the masses.",
+            "attachment": {
+                "type": "image",
+                "payload": {
+                    "url": "https://www.oneyoungworld.com/sites/oneyoungworld.com/files/images/roger-federer.jpg"
+                }
+            }
         }
     })
     # r = requests.post("https://graph.facebook.com/v2.6/me/messages", params=params, headers=headers, data=data)
