@@ -1,8 +1,8 @@
 import os
 
-WELCOME_MESSAGE = "Padharo Mare Desh"
-TENNIS_CHAMP_IMAGE = "https://www.oneyoungworld.com/sites/oneyoungworld.com/files/images/roger-federer.jpg"
-GREETING_TEXT = "Welcome to Janit's Test Bot... Happy to hear from you"
+WELCOME_MESSAGE = "Welcome back. How can I help you locate the address you enter?"
+MAPS_IMAGE = "https://jovemnerd.com.br/wp-content/uploads/2016/09/vitrine_googlepkmn-760x428.jpg"
+GREETING_TEXT = "Welcome to FB Messenger Bot. Hope we can help you locate the address"
 
 params = {
     "access_token": os.environ["PAGE_ACCESS_TOKEN"]

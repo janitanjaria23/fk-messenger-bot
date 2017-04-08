@@ -131,14 +131,12 @@ def send_message(recipient_id, message_text):
 
     send_greeting_message(recipient_id)
     send_first_message(recipient_id, cfg.WELCOME_MESSAGE)
-    attachment_message = cfg.TENNIS_CHAMP_IMAGE
+    attachment_message = cfg.MAPS_IMAGE
     send_attachment_message(recipient_id, attachment_message)
     location = get_google_geocoding_api_response(message_text)
     log("Google Location: " + str(location))
     location_message = "The latitude and longitude of the given address is : " + str(location)
     attachment_message = cfg.google_maps_url + str(location)
-    # attachment_message = "https://maps.googleapis.com/maps/api/staticmap?key=" + str(google_api_key.api_key) + "&markers=color:red|label:B|" + str(location) + "&size=360x360&zoom=13"
-    # attachment_message = "https://maps.googleapis.com/maps/api/staticmap?center=" + str(location) + "&zoom=12&size=400x400&key=" + str(google_api_key.api_key)
     log("Google Maps URL: " + str(attachment_message))
     send_first_message(recipient_id, location_message)
     maps_message = "Location of the address entered: " + attachment_message
