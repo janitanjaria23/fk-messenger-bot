@@ -103,7 +103,7 @@ def send_greeting_message(recipient_id):
     log("greeting message sent")
 
 
-def send_attachment_message(recipient_id):
+def send_attachment_message(recipient_id, attachment_message):
     attachment_data = json.dumps({
         "recipient": {
             "id": recipient_id
@@ -112,7 +112,7 @@ def send_attachment_message(recipient_id):
             "attachment": {
                 "type": "image",
                 "payload": {
-                    "url": cfg.TENNIS_CHAMP_IMAGE
+                    "url": attachment_message
                 }
             }
         }
@@ -131,10 +131,14 @@ def send_message(recipient_id, message_text):
 
     send_greeting_message(recipient_id)
     send_first_message(recipient_id, cfg.WELCOME_MESSAGE)
-    send_attachment_message(recipient_id)
+    attachment_message = cfg.TENNIS_CHAMP_IMAGE
+    send_attachment_message(recipient_id, attachment_message)
     location = get_google_geocoding_api_response(message_text)
     log("Google Location: " + str(location))
-    send_first_message(recipient_id, location)
+    location_message = "The latitude and longitude of the given address is : " + str(location)
+    attachment_message = cfg.google_maps_url + str(location)
+    send_first_message(recipient_id, location_message)
+    send_attachment_message(recipient_id, attachment_message)
 
 
 def log(message):
