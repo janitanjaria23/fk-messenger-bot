@@ -136,7 +136,9 @@ def send_message(recipient_id, message_text):
     location = get_google_geocoding_api_response(message_text)
     log("Google Location: " + str(location))
     location_message = "The latitude and longitude of the given address is : " + str(location)
-    attachment_message = cfg.google_maps_url + str(location)
+    # attachment_message = cfg.google_maps_url + str(location)
+    attachment_message = "https://maps.googleapis.com/maps/api/staticmap?key=" + str(google_api_key.api_key) + "&markers=color:red|label:B|" + str(location) + "&size=360x360&zoom=13"
+    log("Google Maps URL: " + str(attachment_message))
     send_first_message(recipient_id, location_message)
     send_attachment_message(recipient_id, attachment_message)
 
