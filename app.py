@@ -5,6 +5,7 @@ import json
 import requests
 from flask import Flask, request
 import config as cfg
+import google_api_key
 
 app = Flask(__name__)
 
@@ -49,11 +50,12 @@ def webhook():
 
 def get_google_geocoding_api_response(address):
     google_url = "https://maps.googleapis.com/maps/api/geocode/json"
-    api_key = "AIzaSyD5kj_DfP7WCqOhS4HPbWsrGoUFyTo6NhE"
+    api_key = google_api_key.api_key
     location = None
     try:
         r = requests.get(google_url, params=dict(address=address, key=api_key))
         resp = r.json()
+        log(resp)
         if 'results' in resp and len(resp['results']) > 0:
             location = ','.join([resp['results']['geometry']['location']['lat'], resp['results']['geometry']['location']['lng']])
     except Exception as err:
@@ -131,6 +133,7 @@ def send_message(recipient_id, message_text):
     send_first_message(recipient_id, cfg.WELCOME_MESSAGE)
     send_attachment_message(recipient_id)
     location = get_google_geocoding_api_response(message_text)
+    log("Google Location: " + str(location))
     send_first_message(recipient_id, location)
 
 
