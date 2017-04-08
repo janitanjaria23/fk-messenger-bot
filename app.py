@@ -57,7 +57,7 @@ def get_google_geocoding_api_response(address):
         resp = r.json()
         log(resp)
         if 'results' in resp and len(resp['results']) > 0:
-            location = ','.join([resp['results']['geometry']['location']['lat'], resp['results']['geometry']['location']['lng']])
+            location = ','.join([resp['results'][0]['geometry']['location']['lat'], resp['results'][0]['geometry']['location']['lng']])
     except Exception as err:
         log(err)
 
