@@ -12,6 +12,3 @@ headers = {
 }
 
 google_maps_url = "http://maps.google.com/maps?q="
-
-image_url = "https://maps.googleapis.com/maps/api/staticmap?key=" YOUR_GMAPS_TOKEN" +
-          "&markers=color:red|label:B|" + lat + "," + long + "&size=360x360&zoom=13"
